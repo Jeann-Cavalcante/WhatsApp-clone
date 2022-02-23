@@ -11,20 +11,44 @@ import SendIcon from "@material-ui/icons/Send";
 import MicIcon from "@material-ui/icons/Mic";
 
 export default () => {
+  let recognition = null;
+  let SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition !== undefined) {
+    recognition = new SpeechRecognition();
+  }
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [text, setText] = useState("");
+  const [listening, setListening] = useState(false);
+  const [list, setList] = useState("");
 
-  const hendleEmojiClick = (e, emojiObject) => {
+  const handleEmojiClick = (e, emojiObject) => {
     setText(text + emojiObject.emoji);
-    console.log(text);
   };
 
-  const hendleOpenEmoji = () => {
+  const handleOpenEmoji = () => {
     setEmojiOpen(true);
   };
 
-  const hendleCloseEmoji = () => {
+  const handleCloseEmoji = () => {
     setEmojiOpen(false);
+  };
+
+  const handleSendClick = () => {};
+
+  const handleMicClick = () => {
+    if (recognition !== null) {
+      recognition.onstart = () => {
+        setListening(true);
+      };
+      recognition.onend = () => {
+        setListening(false);
+      };
+      recognition.onresult = (e) => {
+        setText(e.results[0][0].transcript);
+      };
+      recognition.start();
+    }
   };
 
   return (
@@ -55,7 +79,7 @@ export default () => {
         style={{ height: emojiOpen ? "200px" : "0px" }}
       >
         <EmojiPickerer
-          onEmojiClick={hendleEmojiClick}
+          onEmojiClick={handleEmojiClick}
           disableSearchBar
           disableSkinTonePicker
         />
@@ -64,7 +88,7 @@ export default () => {
         <div className="chatWindow--pre">
           <div
             className="chatWindow--btn"
-            onClick={hendleCloseEmoji}
+            onClick={handleCloseEmoji}
             style={{ width: emojiOpen ? 40 : 0 }}
           >
             <CloseIcon style={{ color: "#919191" }} />
@@ -72,13 +96,13 @@ export default () => {
 
           <div
             className="chatWindow--btn"
-            onClick={hendleCloseEmoji}
+            onClick={handleCloseEmoji}
             style={{ width: emojiOpen ? 0 : 40 }}
           >
             <AttachFileIcon style={{ color: "#919191" }} />
           </div>
 
-          <div className="chatWindow--btn" onClick={hendleOpenEmoji}>
+          <div className="chatWindow--btn" onClick={handleOpenEmoji}>
             <InsertEmoticonIcon
               style={{ color: emojiOpen ? "#009688" : "#919191" }}
             />
@@ -94,9 +118,17 @@ export default () => {
           />
         </div>
         <div className="chatWindow--pos">
-          <div className="chatWindow--btn">
-            <SendIcon style={{ color: "#919191" }} />
-          </div>
+          {text === "" && (
+            <div onClick={handleMicClick} className="chatWindow--btn">
+              <MicIcon style={{ color: listening ? "#126ece" : "#919191" }} />
+            </div>
+          )}
+
+          {text !== "" && (
+            <div onClick={handleSendClick} className="chatWindow--btn">
+              <SendIcon style={{ color: "#919191" }} />
+            </div>
+          )}
         </div>
       </div>
     </div>
