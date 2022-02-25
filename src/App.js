@@ -10,6 +10,7 @@ import DonutLargeIcon from "@material-ui/icons/DonutLarge";
 import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
+import Login from "./components/Login";
 
 export default () => {
   const [chatlist, setChatlist] = useState([
@@ -35,17 +36,26 @@ export default () => {
     },
   ]);
   const [activeChat, setActiveChat] = useState({});
-  const [user, setUser] = useState({
-    id: 1234,
-    avatar: "https://www.w3schools.com/howto/img_avatar.png",
-    name: "Jean cavalcante",
-  });
+  const [user, setUser] = useState(null);
 
   const [showNewChat, setShowNewChat] = useState(false);
 
   const handleNewChat = () => {
     setShowNewChat(true);
   };
+
+  const handleLoginData = async (u) => {
+    let newUser = {
+      id: u.id,
+      name: u.dsplayerName,
+      avatar: u.photoURL,
+    };
+    setUser(newUser);
+  };
+
+  if (user === null) {
+    return <Login onReceive={handleLoginData} />;
+  }
 
   return (
     <div className="app-window">
