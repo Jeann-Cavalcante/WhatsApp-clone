@@ -46,8 +46,8 @@ export default () => {
 
   const handleLoginData = async (u) => {
     let newUser = {
-      id: u.id,
-      name: u.dsplayerName,
+      id: u.uid,
+      name: u.displayName,
       avatar: u.photoURL,
     };
     setUser(newUser);
