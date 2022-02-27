@@ -11,34 +11,21 @@ import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
 import Login from "./components/Login";
+import Api from "./Api";
 
 export default () => {
-  const [chatlist, setChatlist] = useState([
-    {
-      chatId: 1,
-      title: "Fulano",
-      image: "https://www.w3schools.com/howto/img_avatar.png",
-    },
-    {
-      chatId: 2,
-      title: "Fulano",
-      image: "https://www.w3schools.com/howto/img_avatar.png",
-    },
-    {
-      chatId: 3,
-      title: "Fulano",
-      image: "https://www.w3schools.com/howto/img_avatar.png",
-    },
-    {
-      chatId: 4,
-      title: "Fulano",
-      image: "https://www.w3schools.com/howto/img_avatar.png",
-    },
-  ]);
+  const [chatlist, setChatList] = useState([]);
   const [activeChat, setActiveChat] = useState({});
   const [user, setUser] = useState(null);
 
   const [showNewChat, setShowNewChat] = useState(false);
+
+  useEffect(() => {
+    if (user !== null) {
+      let unsub = Api.onChatList(user.id, setChatList);
+      return unsub;
+    }
+  }, [user]);
 
   const handleNewChat = () => {
     setShowNewChat(true);
@@ -50,6 +37,7 @@ export default () => {
       name: u.displayName,
       avatar: u.photoURL,
     };
+    await Api.addUser(newUser);
     setUser(newUser);
   };
 
@@ -102,7 +90,9 @@ export default () => {
         </div>
       </div>
       <div className="contentarea">
-        {activeChat.chatId !== undefined && <ChatWindow user={user} />}
+        {activeChat.chatId !== undefined && (
+          <ChatWindow data={activeChat} user={user} />
+        )}
         {activeChat.chatId === undefined && <ChatIntro />}
       </div>
     </div>

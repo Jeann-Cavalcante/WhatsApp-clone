@@ -3,6 +3,7 @@ import EmojiPickerer from "emoji-picker-react";
 import "./ChatWindow.css";
 
 import MessageItem from "./MessageItem";
+import Api from "../Api";
 
 import SearchIcon from "@material-ui/icons/Search";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
@@ -12,7 +13,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import SendIcon from "@material-ui/icons/Send";
 import MicIcon from "@material-ui/icons/Mic";
 
-export default ({ user }) => {
+export default ({ user, data }) => {
   const body = useRef();
   let recognition = null;
   let SpeechRecognition =
@@ -23,33 +24,14 @@ export default ({ user }) => {
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [text, setText] = useState("");
   const [listening, setListening] = useState(false);
-  const [list, setList] = useState([
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 1234, body: "Salve cachorro doido" },
-    { author: 123, body: "Salve cachorro doido" },
-  ]);
+  const [list, setList] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    setList([]);
+    let unsub = Api.onChatContent(data.chatId, setList, setUsers);
+    return unsub;
+  }, [data.chatId]);
 
   useEffect(() => {
     if (body.current.scrollheight > body.current.offsetHeight) {
@@ -70,7 +52,19 @@ export default ({ user }) => {
     setEmojiOpen(false);
   };
 
-  const handleSendClick = () => {};
+  const handleInputKeyUp = (e) => {
+    if (e.keyCode == 13) {
+      handleSendClick();
+    }
+  };
+
+  const handleSendClick = () => {
+    if (text !== "") {
+      Api.sendMessage(data, user.id, "text", text, users);
+      setText("");
+      setEmojiOpen(false);
+    }
+  };
 
   const handleMicClick = () => {
     if (recognition !== null) {
@@ -91,12 +85,8 @@ export default ({ user }) => {
     <div className="chatWindow">
       <div className="chatWindow--header">
         <div className="chatWindow--headerinfo">
-          <img
-            className="chatWindow--avatar"
-            src="https://www.w3schools.com/howto/img_avatar.png"
-            alt=""
-          />
-          <div className="chatWindow--name">Jean cavalcante</div>
+          <img className="chatWindow--avatar" src={data.image} alt="" />
+          <div className="chatWindow--name">{data.title}</div>
         </div>
 
         <div className="chatWindow--headerbuttons">
@@ -155,6 +145,7 @@ export default ({ user }) => {
             placeholder="Mensagem"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyUp={handleInputKeyUp}
           />
         </div>
         <div className="chatWindow--pos">

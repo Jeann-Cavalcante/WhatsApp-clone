@@ -1,32 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Api from "../Api";
 
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 import "./NewChat.css";
 
 export default ({ user, chatList, chatShow, show, setShow }) => {
-  const [list, useList] = useState([
-    {
-      id: 123,
-      avatar: "https://www.w3schools.com/howto/img_avatar.png",
-      name: "Jean cavalcante",
-    },
-    {
-      id: 123,
-      avatar: "https://www.w3schools.com/howto/img_avatar.png",
-      name: "Jean cavalcante",
-    },
-    {
-      id: 123,
-      avatar: "https://www.w3schools.com/howto/img_avatar.png",
-      name: "Jean cavalcante",
-    },
-    {
-      id: 123,
-      avatar: "https://www.w3schools.com/howto/img_avatar.png",
-      name: "Jean cavalcante",
-    },
-  ]);
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    const getList = async () => {
+      if (user !== null) {
+        let results = await Api.getContactList(user.id);
+        setList(results);
+      }
+    };
+    getList();
+  }, [user]);
+
+  const addNewChat = async (user2) => {
+    await Api.addNewChat(user, user2);
+
+    handleClose();
+  };
 
   const handleClose = () => {
     setShow(false);
@@ -41,7 +37,11 @@ export default ({ user, chatList, chatShow, show, setShow }) => {
       </div>
       <div className="newChat--list">
         {list.map((item, key) => (
-          <div className="newChat--item" key={key}>
+          <div
+            onClick={() => addNewChat(item)}
+            className="newChat--item"
+            key={key}
+          >
             <img className="newChat--itemavatar" src={item.avatar} alt="" />
             <div className="newChat--itemname">{item.name}</div>
           </div>
