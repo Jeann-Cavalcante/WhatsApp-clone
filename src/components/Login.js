@@ -38,7 +38,7 @@ export default ({ onReceive }) => {
           />
           <span className="login__input-border" />
           <i className="fa fa-eye" aria-hidden="true" />
-          <input className="login__submit" />
+          <input defaultValue="Login" className="login__submit" />
           <div className="login">
             <button onClick={handleFacebookLogin}>Logar com facebook</button>
           </div>
@@ -46,7 +46,7 @@ export default ({ onReceive }) => {
             Esqueceu a senha?
           </a>
           <br />
-          <a className="login__reset" href="#">
+          <a className="login__reset" href="/cadastro.html">
             Cadastro
           </a>
         </form>
