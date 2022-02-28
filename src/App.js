@@ -18,7 +18,7 @@ export default () => {
   const [activeChat, setActiveChat] = useState({});
   const [user, setUser] = useState(null);
 
-  const [showNewChat, setShowNewChat] = useState(false);
+  const [showNewChat, setShowNewChat] = useState([{}]);
 
   useEffect(() => {
     if (user !== null) {
