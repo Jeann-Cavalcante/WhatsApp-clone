@@ -16,9 +16,16 @@ import Api from "./Api";
 export default () => {
   const [chatlist, setChatList] = useState([]);
   const [activeChat, setActiveChat] = useState({});
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState([
+    {
+      id: 1232,
+      name: "Victoria",
+      avatar:
+        "https://scontent-gru1-1.xx.fbcdn.net/v/t39.30808-6/241550397_4926558550792930_2693272675163190971_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=8_aolizufQ0AX8-S7ie&_nc_ht=scontent-gru1-1.xx&oh=00_AT-Dwd9e2aKmo43ayoczmndnIpGBUensuul_Hcq8xWgn3w&oe=622141C4",
+    },
+  ]);
 
-  const [showNewChat, setShowNewChat] = useState([{}]);
+  const [showNewChat, setShowNewChat] = useState(false);
 
   useEffect(() => {
     if (user !== null) {
